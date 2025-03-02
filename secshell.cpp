@@ -585,6 +585,7 @@ private:
 			"  - Input sanitization\n"
 			"  - Process isolation\n"
 			"  - Job tracking\n"
+			"  - Service Management\n"
 			"  - Background job execution\n"
 			"  - Piped command execution\n"
 			"  - Input/output redirection\n"
@@ -597,8 +598,11 @@ private:
 			"  > env\n"
 			"  > unset MY_VAR\n"
 			"  > history\n"
+			"  > blacklist\n"
+			"  > edit-blacklist\n"
+			"  > exit\n"
 			"\n\033[36mNote:\033[0m\n"
-			"All commands are subject to security checks and sanitization.\n"
+			"\nAll commands are subject to security checks and sanitization.\n"
 			"Only executables from trusted directories are permitted.\n\033[0m";
 	}
 
