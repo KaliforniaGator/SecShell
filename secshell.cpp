@@ -576,6 +576,8 @@ private:
 			"\n\033[36mExamples:\033[0m\n"
 			"  > drawbox \"Security Alert\" solid green white\n"
 			"  > ls -l\n"
+			"  > ps \n"
+			"  > tcpdumb \n"
 			"  > jobs\n"
 			"  > services list\n"
 			"  > export MY_VAR=value\n"
