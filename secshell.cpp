@@ -20,6 +20,7 @@ class SecShell {
     // Security whitelists
     const std::vector<std::string> ALLOWED_DIRS = {"/usr/bin/", "/bin/","/opt/"};
     const std::vector<std::string> ALLOWED_COMMANDS = {"ls", "ps", "netstat", "tcpdump","cd","clear","ifconfig"};
+    const std::string BLACKLIST="blacklist";
     
     // Blacklist of commands
     std::vector<std::string> BLACKLISTED_COMMANDS;
@@ -37,7 +38,7 @@ class SecShell {
 
 public:
     SecShell() {
-        load_blacklist("blacklist"); // Load blacklisted commands from file
+        load_blacklist(BLACKLIST); // Load blacklisted commands from file
     }
 
     void run() {
@@ -181,7 +182,7 @@ private:
 	
 	void reload_blacklist() {
         BLACKLISTED_COMMANDS.clear(); // Clear the existing blacklist
-        load_blacklist("blacklist.txt"); // Reload the blacklist from the file
+        load_blacklist(BLACKLIST); // Reload the blacklist from the file
         print_alert("Blacklist reloaded.");
     }
 
