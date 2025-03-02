@@ -503,7 +503,7 @@ private:
 
 	void display_help() {
 		// Use the drawbox binary to draw the title box
-		std::string drawbox_command = "drawbox \" SecShell Help \" solid bg_blue bold_white";
+		std::string drawbox_command = "drawbox \" SecShell Help \" bold_white";
 		int result = system(drawbox_command.c_str());
 
 		if (result != 0) {
