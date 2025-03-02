@@ -37,7 +37,7 @@ class SecShell {
 
 public:
     SecShell() {
-        load_blacklist("blacklist.txt"); // Load blacklisted commands from file
+        load_blacklist("blacklist"); // Load blacklisted commands from file
     }
 
     void run() {
