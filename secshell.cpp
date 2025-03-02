@@ -12,6 +12,8 @@
 #include <csignal>
 #include <fcntl.h>
 #include <fstream>
+#include <libgen.h>
+#include <limits.h>
 
 class SecShell {
     std::unordered_map<pid_t, std::string> jobs;
@@ -20,7 +22,7 @@ class SecShell {
     // Security whitelists
     const std::vector<std::string> ALLOWED_DIRS = {"/usr/bin/", "/bin/","/opt/"};
     const std::vector<std::string> ALLOWED_COMMANDS = {"ls", "ps", "netstat", "tcpdump","cd","clear","ifconfig"};
-    const std::string BLACKLIST="blacklist";
+    std::string BLACKLIST=".blacklist";
     
     // Blacklist of commands
     std::vector<std::string> BLACKLISTED_COMMANDS;
@@ -37,7 +39,7 @@ class SecShell {
     }
 
 public:
-    SecShell() {
+    SecShell(const std::string& blacklist_path) : BLACKLIST(blacklist_path) {
         load_blacklist(BLACKLIST); // Load blacklisted commands from file
     }
 
@@ -185,7 +187,16 @@ private:
         	load_blacklist(BLACKLIST); // Reload the blacklist from the file
         	print_alert("Blacklist reloaded.");
     	}
-	void list_blacklist_commands(const std::string& filename = "blacklist") {
+	
+	void edit_blacklist() {
+	
+	 	std::string command = "nano " + BLACKLIST;
+		system(command.c_str());
+		return;
+
+	}
+
+	void list_blacklist_commands(const std::string& filename = ".blacklist") {
 	     std::string drawbox_command = "drawbox \" Blacklisted Commands \" bold_white";
 	     int result = system(drawbox_command.c_str());
 	     if (result != 0) {
@@ -229,19 +240,24 @@ private:
 			pos = pipe_pos + 1;
 		}
 
-		if (commands.size() > 1) {
-			execute_piped_commands(commands);
-		} else if (!commands.empty()) {
-			std::vector<std::string> args = commands[0];
-			bool background = false;
-			if (args.back() == "&") {
-				background = true;
-				args.pop_back();
+			if (commands.size() > 1) {
+				execute_piped_commands(commands);
+			} else if (!commands.empty()) {
+				std::vector<std::string> args = commands[0];
+				bool background = false;
+				if (args.back() == "&") {
+					background = true;
+					args.pop_back();
 			}
 
-			if (args[0] == "exit") {
-				running = false;
-			} else if (args[0] == "services") {
+			// Check if the command is blacklisted
+			if (std::find(BLACKLISTED_COMMANDS.begin(), BLACKLISTED_COMMANDS.end(), args[0])
+				!= BLACKLISTED_COMMANDS.end()) {
+				print_error("Command is blacklisted: " + args[0]);
+				return;
+			}
+
+			if (args[0] == "services") {
 				manage_services(args);
 			} else if (args[0] == "jobs") {
 				list_jobs();
@@ -260,14 +276,13 @@ private:
 			} else if (args[0] == "reload") { // Add the reload command
                 		reload_blacklist();
 			} else if (args[0] == "blacklist") {
-				list_blacklist_commands();
-				
+				list_blacklist_commands(BLACKLIST);
+			} else if (args[0] == "edit-blacklist") {
+				edit_blacklist();
+			} else if (args[0] == "exit") {
+				running = false;
 			} else {
-				if (std::find(BLACKLISTED_COMMANDS.begin(), BLACKLISTED_COMMANDS.end(), args[0])
-					!= BLACKLISTED_COMMANDS.end()) {
-					print_error("Command is blacklisted: " + args[0]);
-					return;
-				}
+				
 				// Special handling for 'cat' without arguments
 				if (args[0] == "cat" && args.size() == 1) {
 					print_error("Usage: cat <file>");
@@ -576,8 +591,6 @@ private:
 			"\n\033[36mExamples:\033[0m\n"
 			"  > drawbox \"Security Alert\" solid green white\n"
 			"  > ls -l\n"
-			"  > ps \n"
-			"  > tcpdumb \n"
 			"  > jobs\n"
 			"  > services list\n"
 			"  > export MY_VAR=value\n"
@@ -695,8 +708,31 @@ void SecShell::load_blacklist(const std::string& filename) {
     }
 }
 
-int main() {
-    SecShell shell;
+// Function to get the directory of the executable
+std::string get_executable_directory() {
+    char exe_path[PATH_MAX];
+    ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
+    if (len == -1) {
+        std::cerr << "Failed to get executable path." << std::endl;
+        return "";
+    }
+    exe_path[len] = '\0';
+    return std::string(dirname(exe_path));
+}
+
+int main(int argc, char* argv[]) {
+	
+    // Get the directory of the executable
+    std::string exe_dir = get_executable_directory();
+    if (exe_dir.empty()) {
+        return 1; // Exit if we couldn't get the executable directory
+    }
+
+    // Construct the path to the .blacklist file
+    std::string blacklist_path = exe_dir + "/.blacklist";
+
+    // Create and run the shell
+    SecShell shell(blacklist_path);
     shell.run();
     return 0;
 }
