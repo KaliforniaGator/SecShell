@@ -133,7 +133,7 @@ private:
         HIST_ENTRY** history_entries = history_list(); // Renamed variable to avoid conflict
         if (history_entries) {
             for (int i = 0; history_entries[i]; i++) {
-                std::cout << "  " << (i + 1) << "  " << history_entries[i]->line << "\n";
+                std::cout << "  " << (i + 1) << ". " << history_entries[i]->line << "\n";
             }
         } else {
             std::cout << "No command history available.\n";
@@ -310,7 +310,7 @@ private:
             return;
         }
 
-        std::cout << "Executing: " << command << "\n";
+        //std::cout << "Executing: " << command << "\n";
         int status = system(command.c_str());
 
         if (status != 0) {
@@ -333,7 +333,7 @@ private:
             print_error("Failed to execute drawbox command.");
             return;
         }
-        std::cout << "\033[33mActive Jobs:\033[0m\n";
+        //std::cout << "\nActive Jobs:";
         for (const auto& job : jobs) {
             std::cout << "PID: " << job.first << " - " << job.second << "\n";
         }
