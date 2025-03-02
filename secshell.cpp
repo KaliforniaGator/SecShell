@@ -204,7 +204,7 @@ private:
 	    std::string line;
 	    while (std::getline(file, line)) {
 		line_number += 1;
-	        std::cout " " << std::to_string(line_number) << line << "\n";
+	        std::cout " " << (line_number) << line << "\n";
 	    }
 	
 	    // Close the file
