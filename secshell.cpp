@@ -123,7 +123,7 @@ private:
     }
 
     void display_history() {
-		std::string drawbox_command = "drawbox \" Command History \" bold_white";
+	std::string drawbox_command = "drawbox \" Command History \" bold_white";
         int result = system(drawbox_command.c_str());
 
         if (result != 0) {
@@ -181,10 +181,33 @@ private:
 	}
 	
 	void reload_blacklist() {
-        BLACKLISTED_COMMANDS.clear(); // Clear the existing blacklist
-        load_blacklist(BLACKLIST); // Reload the blacklist from the file
-        print_alert("Blacklist reloaded.");
-    }
+        	BLACKLISTED_COMMANDS.clear(); // Clear the existing blacklist
+        	load_blacklist(BLACKLIST); // Reload the blacklist from the file
+        	print_alert("Blacklist reloaded.");
+    	}
+	void list_blacklist_commands(const std::string& filename = "blacklist") {
+	     std::string drawbox_command = "drawbox \" Blacklisted Commands \" bold_white";
+	     int result = system(drawbox_command.c_str());
+	     if (result != 0) {
+	            print_error("Failed to execute drawbox command.");
+	            return;
+	    }
+	    // Open the file
+	    std::ifstream file(filename);
+	    if (!file.is_open()) {
+	        std::cerr << "Error: Could not open file '" << filename << "'.\n";
+	        return;
+	    }
+	
+	    // Read and print each line
+	    std::string line;
+	    while (std::getline(file, line)) {
+	        std::cout << line << "\n";
+	    }
+	
+	    // Close the file
+	    file.close();
+	}
 
 	void process_command(const std::string& input) {
 		std::string input_copy = input;
@@ -233,7 +256,10 @@ private:
 			} else if (args[0] == "unset") {
 				unset_env_variable(args);
 			} else if (args[0] == "reload") { // Add the reload command
-                reload_blacklist();
+                		reload_blacklist();
+			} else if (args[0] == "blacklist") {
+				list_blacklist_commands();
+				
 			} else {
 				if (std::find(BLACKLISTED_COMMANDS.begin(), BLACKLISTED_COMMANDS.end(), args[0])
 					!= BLACKLISTED_COMMANDS.end()) {
