@@ -122,7 +122,7 @@ private:
     }
 
     void display_history() {
-		std::string drawbox_command = "drawbox \" Command History \" solid bg_blue bold_white";
+		std::string drawbox_command = "drawbox \" Command History \" bold_white";
         int result = system(drawbox_command.c_str());
 
         if (result != 0) {
@@ -273,7 +273,7 @@ private:
         }
 
         // Use drawbox for the title
-        std::string drawbox_command = "drawbox \" Service Manager \" solid bg_blue bold_white";
+        std::string drawbox_command = "drawbox \" Service Manager \" bold_white";
         int result = system(drawbox_command.c_str());
 
         if (result != 0) {
@@ -297,7 +297,7 @@ private:
 	}
 
     void list_jobs() {
-		std::string drawbox_command = "drawbox \" Jobs \" solid bg_blue bold_white";
+		std::string drawbox_command = "drawbox \" Jobs \" bold_white";
         int result = system(drawbox_command.c_str());
 
         if (result != 0) {
@@ -576,7 +576,7 @@ private:
     }
 
     void print_alert(const std::string& message) {
-		std::string drawbox_command = "drawbox \"" + message + "\" solid bg_yellow bold_white";
+		std::string drawbox_command = "drawbox \"" + message + "\" bold_yellow";
 		int result = system(drawbox_command.c_str());
 		if (result != 0) {
 			std::cerr << "\033[33m[ALERT] " << message << "\033[0m\n"; // Fallback if drawbox fails
@@ -584,7 +584,7 @@ private:
 	}
 
 	void print_error(const std::string& message) {
-		std::string drawbox_command = "drawbox \"" + message + "\" solid bg_red bold_white";
+		std::string drawbox_command = "drawbox \"" + message + "\" bold_red";
 		int result = system(drawbox_command.c_str());
 		if (result != 0) {
 			std::cerr << "\033[31m[ERROR] " << message << "\033[0m\n"; // Fallback if drawbox fails
