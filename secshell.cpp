@@ -200,9 +200,11 @@ private:
 	    }
 	
 	    // Read and print each line
+	    int line_number = 0;
 	    std::string line;
 	    while (std::getline(file, line)) {
-	        std::cout << line << "\n";
+		line_number += 1;
+	        std::cout " " << std::to_string(line_number) << line << "\n";
 	    }
 	
 	    // Close the file
