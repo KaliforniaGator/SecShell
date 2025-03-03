@@ -16,7 +16,7 @@
 #include <limits.h>
 
 class SecShell {
-    std::unordered_map<pid_t, std::string> jobs;
+	std::unordered_map<pid_t, std::string> jobs;
     bool running = true;
 
     // Security whitelists
@@ -125,7 +125,7 @@ private:
     }
 
     void display_history() {
-	std::string drawbox_command = "drawbox \" Command History \" bold_white";
+		std::string drawbox_command = "drawbox \" Command History \" bold_white";
         int result = system(drawbox_command.c_str());
 
         if (result != 0) {
@@ -166,6 +166,13 @@ private:
 	}
 	
 	void list_env_variables() {
+		std::string drawbox_command = "drawbox \" Environment Variable \" bold_white";
+        int result = system(drawbox_command.c_str());
+
+        if (result != 0) {
+            print_error("Failed to execute drawbox command.");
+            return;
+        }
 		extern char** environ;
 		for (char** env = environ; *env; env++) {
 			std::cout << *env << "\n";
@@ -173,12 +180,17 @@ private:
 	}
 
 	void unset_env_variable(const std::vector<std::string>& args) {
+		std::string var_value = args[1];
+		
+		
 		if (args.size() < 2) {
 			print_error("Usage: unset VAR");
 			return;
 		}
 		if (unsetenv(args[1].c_str()) != 0) {
 			print_error("Failed to unset environment variable: " + std::string(strerror(errno)));
+		} else {
+			print_alert("Unset: " + var_value);
 		}
 	}
 	
@@ -670,6 +682,16 @@ private:
 				} else {
 					arg += c;
 				}
+			} else if (c == '$' && !in_quotes) {
+				// Handle environment variable expansion
+				std::string var_name;
+				while (i + 1 < input.length() && (isalnum(input[i + 1]) || input[i + 1] == '_')) {
+					var_name += input[++i];
+				}
+				const char* var_value = getenv(var_name.c_str());
+				if (var_value) {
+					arg += var_value;
+				}
 			} else if (c == ' ' && !in_quotes) {
 				if (!arg.empty()) {
 					args.push_back(arg);
@@ -688,7 +710,7 @@ private:
 	}
 
     static void signal_handler(int signum) {
-        std::cout << "\nReceived signal " << signum << ". Use 'exit' to quit.\n";
+        std::cout << "\nReceived signal " << signum << ". Use 'exit' to quit. Press ENTER to continue...\n";
     }
 };
 
@@ -725,6 +747,11 @@ std::string get_executable_directory() {
 }
 
 int main(int argc, char* argv[]) {
+	#ifdef _WIN32
+        system("cls");
+    #elif defined(unix) || defined(__unix__) || defined(__unix)
+        system("clear");
+    #endif
 	
     // Get the directory of the executable
     std::string exe_dir = get_executable_directory();
