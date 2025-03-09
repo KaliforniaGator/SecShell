@@ -21,7 +21,7 @@ class SecShell {
 
     // Security whitelists
     const std::vector<std::string> ALLOWED_DIRS = {"/usr/bin/", "/bin/","/opt/"};
-    const std::vector<std::string> ALLOWED_COMMANDS = {"ls", "ps", "netstat", "tcpdump","cd","clear","ifconfig"};
+    const std::vector<std::string> ALLOWED_COMMANDS = {"ls", "ps", "netstat", "tcpdump","cd","clear","ifconfig","apk","apt","pacman","brew"};
     std::string BLACKLIST=".blacklist";
     
     // Blacklist of commands
