@@ -16,7 +16,9 @@ SecShell is a secure shell implementation designed to provide a controlled envir
 - **Input/Output Redirection**: Supports input and output redirection (e.g., `ls > output.txt`).
 - **Built-in Commands**: Includes commands like `cd`, `history`, `export`, `env`, `unset`,`blacklist`,`edit-blacklist`, and more.
 
-- **Admin-Control**: All the blacklisted commands go in the .blacklist file. Write each command in its own line. the use ```bash sudo chown (root|admin|sudo) .blacklist ``` to prevent a normal user from editing this file. You can also blacklist commands like edit-blacklist to make sure the file stays uneditable to the user. Blacklisting expands to commands such as : `exit`, `shutdown`,`reboot`, or any other command you do not want the user to run. If `exit` is blacklisted you WILL NOT be able to exit the SecShell, so use the blacklistings wisely.
+- **Admin-Control**: All the blacklisted commands go in the .blacklist file. Write each command in its own line. Then use ```bash sudo chown (root|admin|sudo) .blacklist ``` to prevent a unprivileged user from editing this file.
+  
+- You can also blacklist commands like edit-blacklist to make sure the file stays uneditable to the user. Blacklisting expands to commands such as : `exit`, `shutdown`,`reboot`, or any other command you do not want the user to run. **WARNING:** If `exit` is blacklisted you WILL NOT be able to exit the SecShell, so use the blacklistings wisely.
 
 ## Installation
 
